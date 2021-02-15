@@ -1,29 +1,14 @@
 {
-  "name": "react-native-module-template",
-  "version": "2.1.0",
-  "description": "A starter for the React Native library written in TypeScript, with linked example project and optional native code in Swift and Kotlin.",
-  "homepage": "https://github.com/demchenkoalex/react-native-module-template#readme",
+  "name": "react-native-prismic-richtext",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Spoutnik97/react-native-prismic-richtext",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Alex Demchenko <alexdemchenko@yahoo.com>",
+  "author": "Guillaume Piedigrossi <guillaume.piedigrossi@gadz.org>",
   "license": "MIT",
   "files": [
-    "android",
-    "ios",
-    "lib",
-    "react-native-module-template.podspec",
-    "!.DS_Store",
-    "!.gradle",
-    "!.idea",
-    "!build",
-    "!gradle",
-    "!*.iml",
-    "!gradlew",
-    "!gradlew.bat",
-    "!local.properties",
-    "!project.xcworkspace",
-    "!xcshareddata",
-    "!xcuserdata"
+    "lib"
   ],
   "scripts": {
     "compile": "rm -rf lib && tsc -p .",
@@ -62,5 +47,8 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "prismic-richtext": "^1.0.3"
   }
 }
