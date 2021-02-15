@@ -13,5 +13,5 @@
     "target": "ESNext"
   },
   "exclude": ["**/__tests__/*"],
-  "include": ["src"]
+  "include": ["src", "typings"]
 }
