@@ -2,6 +2,7 @@
 import PrismicRichText, { Elements } from 'prismic-richtext'
 import React, { createElement } from 'react'
 import {
+  ImageStyle,
   Linking,
   StyleProp,
   Text,
@@ -9,10 +10,12 @@ import {
   TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native'
 
 import {
   HTMLTags,
+  ImageType,
   LinkType,
   RichTextContent,
   RichTextDefaultStyles,
@@ -21,6 +24,7 @@ import {
   SpanType,
 } from '../typings'
 import { HoverableLink } from './components/HoverableLink'
+import { ImageView } from './components/ImageView'
 
 function propsWithUniqueKey(props = {}, key: string) {
   return Object.assign(props, { key })
@@ -136,11 +140,21 @@ function serializeSpan(
   return null
 }
 
-function serializeImage(element: SpanType, key: string) {
+function serializeImage(
+  element: ImageType,
+  key: string,
+  wrapperStyle: StyleProp<ViewStyle>,
+  style: StyleProp<ImageStyle>
+) {
   return createElement(
     Text,
     propsWithUniqueKey({}, key),
-    JSON.stringify(element)
+    <ImageView
+      element={element}
+      wrapperStyle={wrapperStyle}
+      style={style}
+      accessibilityLabel={element.alt}
+    />
   )
 }
 
@@ -189,7 +203,12 @@ export const serializerWithStyle = (styles: RichTextStyles) => (
         styles
       )
     case Elements.image:
-      return serializeImage(element, index)
+      return serializeImage(
+        (element as unknown) as ImageType,
+        index,
+        styles.imageWrapper as ViewStyle,
+        styles.image as ImageStyle
+      )
     case Elements.hyperlink:
       return serializeHyperlink(
         element,
@@ -240,6 +259,7 @@ export function computeStyles(
     hyperlink: [defaultStyle, styles.hyperlink],
     hyperlinkHover: [defaultStyle, styles.hyperlinkHover],
     image: [defaultStyle, styles.image],
+    imageWrapper: [defaultStyle, styles.imageWrapper],
     embed: [defaultStyle, styles.embed],
     span: [defaultStyle, styles.span],
   }
