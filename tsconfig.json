@@ -4,14 +4,22 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react-native",
-    "lib": ["ESNext"],
-    "module": "CommonJS",
+    "lib": [
+      "ESNext"
+    ],
+    "module": "esnext",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "outDir": "./lib",
     "sourceMap": true,
     "strict": true,
     "target": "ESNext"
   },
-  "exclude": ["**/__tests__/*"],
-  "include": ["src", "typings"]
+  "exclude": [
+    "**/__tests__/*"
+  ],
+  "include": [
+    "src",
+    "typings"
+  ]
 }
