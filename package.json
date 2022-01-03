@@ -10,6 +10,12 @@
   "files": [
     "lib"
   ],
+  "keywords": [
+    "prismic",
+    "richtext",
+    "react-native",
+    "render"
+  ],
   "scripts": {
     "compile": "rm -rf lib && tsc -p .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
