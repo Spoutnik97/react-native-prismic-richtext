@@ -1,5 +1,3 @@
-declare module 'prismic-richtext';
-
 export interface Elements {
   heading1: 'heading1';
   heading2: 'heading2';
