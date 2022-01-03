@@ -26,8 +26,6 @@ export const ImageView = (props: ImageProps) => {
   const aspectRatio = element.dimensions.width / element.dimensions.height
   const height = width / aspectRatio
 
-  console.log('wrapper', wrapperStyle)
-
   return (
     <View style={wrapperStyle}>
       <Image

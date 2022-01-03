@@ -143,8 +143,8 @@ function serializeSpan(
 function serializeImage(
   element: ImageType,
   key: string,
-  wrapperStyle: StyleProp<ViewStyle>,
-  style: StyleProp<ImageStyle>
+  wrapperStyle?: StyleProp<ViewStyle>,
+  style?: StyleProp<ImageStyle>
 ) {
   return createElement(
     Text,
