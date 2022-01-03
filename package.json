@@ -7,6 +7,12 @@
   "types": "lib/index.d.ts",
   "author": "Guillaume Piedigrossi <guillaume.piedigrossi@gadz.org>",
   "license": "MIT",
+  "keywords": [
+    "prismic",
+    "richtext",
+    "react-native",
+    "render"
+  ],
   "files": [
     "lib"
   ],
