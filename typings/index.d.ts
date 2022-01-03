@@ -1,6 +1,6 @@
 // @ts-ignore
 import { Elements } from 'prismic-richtext'
-import { StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 
 export type RichTextElementType = Elements[keyof Elements]
 
@@ -17,6 +17,16 @@ type SpanDataType = {
 interface SpanType extends SpanDataType {
   start: number
   end: number
+  type: RichTextElementType
+}
+
+interface ImageType extends SpanDataType {
+  url: string
+  alt?: string
+  dimensions: {
+    width: number
+    height: number
+  }
   type: RichTextElementType
 }
 
@@ -45,7 +55,10 @@ export type HTMLTags =
   | 'img'
 
 export type RichTextStyles = {
-  [key in keyof Elements]?: StyleProp<TextStyle> | StyleProp<ViewStyle>
+  [key in keyof Elements]?:
+    | StyleProp<TextStyle>
+    | StyleProp<ViewStyle>
+    | StyleProp<ImageStyle>
 }
 
 export type RichTextDefaultStyles = TextStyle
