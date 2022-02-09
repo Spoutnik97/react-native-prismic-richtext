@@ -16,6 +16,7 @@ import {
 import {
   HTMLTags,
   ImageType,
+  LinkFunction,
   LinkType,
   RichTextContent,
   RichTextDefaultStyles,
@@ -98,7 +99,8 @@ function serializeHyperlink(
   children: React.ComponentElement<TextProps, Text>,
   key: string,
   style: StyleProp<TextStyle>,
-  hoverStyle: StyleProp<TextStyle>
+  hoverStyle: StyleProp<TextStyle>,
+  onLinkPress?: LinkFunction
 ) {
   if (element.data) {
     const targetAttr = element.data.target
@@ -110,7 +112,9 @@ function serializeHyperlink(
     const props: TextProps & { href: string; target?: string; rel?: string } = {
       accessibilityLabel: 'link',
       onPress: () => {
-        Linking.openURL(href).catch(console.warn)
+        onLinkPress
+          ? onLinkPress(element.data)
+          : Linking.openURL(href).catch(console.warn)
       },
       href,
       ...targetAttr,
@@ -158,7 +162,10 @@ function serializeImage(
   )
 }
 
-export const serializerWithStyle = (styles: RichTextStyles) => (
+export const serializerWithStyle = (
+  styles: RichTextStyles,
+  onLinkPress?: LinkFunction
+) => (
   type: RichTextElementType,
   element: SpanType,
   text: string,
@@ -215,7 +222,8 @@ export const serializerWithStyle = (styles: RichTextStyles) => (
         children,
         index,
         styles.hyperlink,
-        styles.hyperlinkHover
+        styles.hyperlinkHover,
+        onLinkPress
       )
     case Elements.label:
       return serializeStandardTag('label', children, index, styles.label)
