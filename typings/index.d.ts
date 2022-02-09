@@ -8,6 +8,16 @@ export interface LinkType {
   url: string
   link_type: 'Web' | string
   target?: string
+  type?: string
+  id?: string
+  uid?: string
+  slug?: string
+  lang?: string
+  isBroken?: boolean
+}
+
+export interface LinkFunction {
+  (data: LinkType | undefined): void
 }
 
 type SpanDataType = {
