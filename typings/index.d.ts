@@ -38,6 +38,7 @@ interface ImageType extends SpanDataType {
     height: number
   }
   type: RichTextElementType
+  linkTo: LinkType
 }
 
 export type RichTextContent = {

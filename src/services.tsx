@@ -90,7 +90,7 @@ function serializeOl(
   )
 }
 
-const linkResolver = (link: LinkType): string => {
+export const linkResolver = (link: LinkType): string => {
   return link.url
 }
 
@@ -148,7 +148,8 @@ function serializeImage(
   element: ImageType,
   key: string,
   wrapperStyle?: StyleProp<ViewStyle>,
-  style?: StyleProp<ImageStyle>
+  style?: StyleProp<ImageStyle>,
+  onLinkPress?: LinkFunction
 ) {
   return createElement(
     Text,
@@ -158,6 +159,7 @@ function serializeImage(
       wrapperStyle={wrapperStyle}
       style={style}
       accessibilityLabel={element.alt}
+      onLinkPress={onLinkPress}
     />
   )
 }
@@ -214,7 +216,8 @@ export const serializerWithStyle = (
         (element as unknown) as ImageType,
         index,
         styles.imageWrapper as ViewStyle,
-        styles.image as ImageStyle
+        styles.image as ImageStyle,
+        onLinkPress
       )
     case Elements.hyperlink:
       return serializeHyperlink(
