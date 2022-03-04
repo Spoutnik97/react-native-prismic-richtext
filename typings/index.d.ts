@@ -1,6 +1,13 @@
 // @ts-ignore
 import { Elements } from 'prismic-richtext'
-import { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import {
+  ImageStyle,
+  StyleProp,
+  Text,
+  TextProps,
+  TextStyle,
+  ViewStyle,
+} from 'react-native'
 
 export type RichTextElementType = Elements[keyof Elements]
 
@@ -41,6 +48,26 @@ interface ImageType extends SpanDataType {
   linkTo: LinkType
 }
 
+export interface OembedType {
+  type: 'embed'
+  oembed: {
+    author_name?: string | null
+    author_url?: string | null
+    embed_url?: string | null
+    height?: number | null
+    html?: string | null
+    provider_name?: string | null
+    provider_url?: string | null
+    thumbnail_url?: string | null
+    thumbnail_height?: number | null
+    thumbnail_width?: number | null
+    title?: string | null
+    type?: string | null
+    version?: string | null
+    width?: number | null
+  }
+}
+
 export type RichTextContent = {
   type: string
   text: string
@@ -70,6 +97,20 @@ export type RichTextStyles = {
     | StyleProp<TextStyle>
     | StyleProp<ViewStyle>
     | StyleProp<ImageStyle>
+}
+
+export interface SerializerFunction {
+  (
+    type: RichTextElementType,
+    element: SpanType,
+    text: string,
+    children: React.ComponentElement<TextProps, Text>,
+    index: string
+  ): React.ComponentElement<TextProps, Text> | null
+}
+
+export type RichTextSerializer = {
+  [key in keyof Elements]?: SerializerFunction
 }
 
 export type RichTextDefaultStyles = TextStyle

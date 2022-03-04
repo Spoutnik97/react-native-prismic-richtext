@@ -6,6 +6,7 @@ import {
   LinkFunction,
   RichTextContent,
   RichTextDefaultStyles,
+  RichTextSerializer,
   RichTextStyles,
 } from '../typings'
 import { computeStyles, serializerWithStyle } from './services'
@@ -16,6 +17,7 @@ type RichTextProps = {
   styles?: RichTextStyles
   ContainerComponent?: React.ComponentClass | React.ExoticComponent
   onLinkPress?: LinkFunction
+  serializers?: RichTextSerializer
 }
 
 export const RichText = ({
@@ -24,6 +26,7 @@ export const RichText = ({
   styles,
   ContainerComponent,
   onLinkPress,
+  serializers,
 }: RichTextProps) => {
   if (!richText) {
     console.warn(`Prop 'render' was not specified in 'RichTextComponent'.`)
@@ -40,7 +43,7 @@ export const RichText = ({
   const computedStyles = computeStyles(defaultStyle, styles)
   const serializedChildren = PrismicRichText.serialize(
     richText,
-    serializerWithStyle(computedStyles, onLinkPress)
+    serializerWithStyle(computedStyles, onLinkPress, serializers)
   )
   return createElement(ContainerComponent || Fragment, {}, serializedChildren)
 }

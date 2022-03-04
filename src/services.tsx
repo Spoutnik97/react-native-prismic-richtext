@@ -21,6 +21,7 @@ import {
   RichTextContent,
   RichTextDefaultStyles,
   RichTextElementType,
+  RichTextSerializer,
   RichTextStyles,
   SpanType,
 } from '../typings'
@@ -166,7 +167,8 @@ function serializeImage(
 
 export const serializerWithStyle = (
   styles: RichTextStyles,
-  onLinkPress?: LinkFunction
+  onLinkPress?: LinkFunction,
+  serializers?: RichTextSerializer
 ) => (
   type: RichTextElementType,
   element: SpanType,
@@ -174,6 +176,10 @@ export const serializerWithStyle = (
   children: React.ComponentElement<TextProps, Text>,
   index: string
 ): React.ComponentElement<TextProps, Text> | null => {
+  const serializeTag = serializers && serializers[type]
+  if (serializeTag !== undefined) {
+    return serializeTag(type, element, text, children, index)
+  }
   switch (type) {
     case Elements.heading1:
       return serializeStandardTag('h1', children, index, styles.heading1)
