@@ -106,7 +106,7 @@ export interface SerializerFunction {
     text: string,
     children: React.ComponentElement<TextProps, Text>,
     index: string
-  ): React.ComponentElement<TextProps, Text> | null
+  ): JSX.Element | null
 }
 
 export type RichTextSerializer = {
