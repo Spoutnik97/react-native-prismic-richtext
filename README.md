@@ -1,7 +1,8 @@
 # Installation
+
 - Run `yarn add react-native-prismic-richtext`
 
-# Usage 
+# Usage
 
 ```jsx
   <RichText
@@ -34,5 +35,22 @@
           fontStyle: 'italic',
         },
       }}
+
+      // Optionally handle links within your app
+      onLinkPress={(data: LinkType | undefined) => {
+        if (data?.link_type === 'Web') {
+          // This is a bug in prismic, it currently does not allow other link types
+          const url = data.url.replace('https://makerist-ar://', 'makerist-ar://')
+          return Linking.openURL(url)
+        }
+      }
+
+      // Optionally overwrite rendering with custom component
+      serializers={{
+        embed: (_type, element, _text, _children, _key) => {
+          const embed = (element as any) as OembedType
+          return <Text key={key}>{embed.oembed.title}</Text>
+        },
+      }}
     />
-````
+```
