@@ -1,3 +1,4 @@
+import { RTImageNode } from '@prismicio/types'
 import React from 'react'
 import {
   Image,
@@ -11,11 +12,11 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import { ImageType, LinkFunction } from '../../typings'
+import { LinkFunction } from '../../typings'
 import { linkResolver } from '../services'
 
 type ImageProps = ViewProps & {
-  element: ImageType
+  element: RTImageNode
   wrapperStyle?: StyleProp<ViewStyle>
   style?: StyleProp<ImageStyle>
   onLinkPress?: LinkFunction
@@ -45,7 +46,7 @@ export const ImageView = (props: ImageProps) => {
         <Image
           style={[style, { width: width, height: height }]}
           source={{ uri: element.url }}
-          accessibilityLabel={element.alt}
+          accessibilityLabel={element.alt || ''}
         />
       </Pressable>
     </View>

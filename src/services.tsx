@@ -1,6 +1,14 @@
-// @ts-ignore
-import PrismicRichText, { Elements } from 'prismic-richtext'
-import React, { createElement } from 'react'
+import { asText as asPrismicText, Element } from '@prismicio/richtext'
+import {
+  FilledLinkToDocumentField,
+  FilledLinkToMediaField,
+  FilledLinkToWebField,
+  RichTextField,
+  RTAnyNode,
+  RTImageNode,
+  RTLinkNode,
+} from '@prismicio/types'
+import React, { createElement, Fragment } from 'react'
 import {
   ImageStyle,
   Linking,
@@ -15,15 +23,13 @@ import {
 
 import {
   HTMLTags,
-  ImageType,
   LinkFunction,
-  LinkType,
-  RichTextContent,
   RichTextDefaultStyles,
   RichTextElementType,
   RichTextSerializer,
   RichTextStyles,
-  SpanType,
+  SerializerChildren,
+  SerializerFunction,
 } from '../typings'
 import { HoverableLink } from './components/HoverableLink'
 import { ImageView } from './components/ImageView'
@@ -43,13 +49,16 @@ function getRNPropsFromHTMLTag(type: HTMLTags): TextProps {
 
 function serializeStandardTag(
   tag: HTMLTags,
-  children: React.ComponentElement<TextProps, Text>,
+  children: SerializerChildren,
   key: string,
   style: StyleProp<TextStyle>
 ) {
   const props = getRNPropsFromHTMLTag(tag)
 
-  if (tag === 'li') return children
+  if (tag === 'li') {
+    return createElement(Fragment, propsWithUniqueKey(props, key), children)
+  }
+
   return createElement(
     Text,
     propsWithUniqueKey({ ...props, style }, key),
@@ -66,7 +75,7 @@ function serializeUl(
     View,
     propsWithUniqueKey({ style: style.list }, key),
     children.map((text, index) => (
-      <Text key={`${key}_${text.key}_${index}`} style={style.listItem}>
+      <Text key={`${key}_${text.key}_${index}`} style={style['list-item']}>
         <Text>• </Text>
         <Text>{text}</Text>
       </Text>
@@ -81,9 +90,9 @@ function serializeOl(
 ) {
   return createElement(
     View,
-    propsWithUniqueKey({ style: style.oList }, key),
+    propsWithUniqueKey({ style: style['o-list'] }, key),
     children.map((text, index) => (
-      <Text key={`${key}_${text.key}_${index}`} style={style.oListItem}>
+      <Text key={`${key}_${text.key}_${index}`} style={style['o-list-item']}>
         <Text>{`${index + 1}. `}</Text>
         <Text>{text}</Text>
       </Text>
@@ -91,23 +100,32 @@ function serializeOl(
   )
 }
 
-export const linkResolver = (link: LinkType): string => {
-  return link.url
+export const linkResolver = (
+  link:
+    | FilledLinkToDocumentField
+    | FilledLinkToWebField
+    | FilledLinkToMediaField
+): string => {
+  return link.url || ''
 }
 
 function serializeHyperlink(
-  element: SpanType,
-  children: React.ComponentElement<TextProps, Text>,
+  element: RTLinkNode,
+  children: SerializerChildren,
   key: string,
   style: StyleProp<TextStyle>,
   hoverStyle: StyleProp<TextStyle>,
   onLinkPress?: LinkFunction
 ) {
   if (element.data) {
-    const targetAttr = element.data.target
-      ? { target: element.data.target }
-      : {}
-    const relAttr = element.data.target ? { rel: 'noopener' } : {}
+    const targetAttr =
+      element.data.link_type === 'Web' && element.data.target
+        ? { target: element.data.target }
+        : {}
+    const relAttr =
+      element.data.link_type === 'Web' && element.data.target
+        ? { rel: 'noopener' }
+        : {}
 
     const href = linkResolver(element.data)
     const props: TextProps & { href: string; target?: string; rel?: string } = {
@@ -146,7 +164,7 @@ function serializeSpan(
 }
 
 function serializeImage(
-  element: ImageType,
+  element: RTImageNode,
   key: string,
   wrapperStyle?: StyleProp<ViewStyle>,
   style?: StyleProp<ImageStyle>,
@@ -159,7 +177,7 @@ function serializeImage(
       element={element}
       wrapperStyle={wrapperStyle}
       style={style}
-      accessibilityLabel={element.alt}
+      accessibilityLabel={element.alt || undefined}
       onLinkPress={onLinkPress}
     />
   )
@@ -169,88 +187,88 @@ export const serializerWithStyle = (
   styles: RichTextStyles,
   onLinkPress?: LinkFunction,
   serializers?: RichTextSerializer
-) => (
+): SerializerFunction => (
   type: RichTextElementType,
-  element: SpanType,
-  text: string,
-  children: React.ComponentElement<TextProps, Text>,
+  element: RTAnyNode,
+  text: string | undefined,
+  children: SerializerChildren,
   index: string
-): React.ComponentElement<TextProps, Text> | null => {
+) => {
   const serializeTag = serializers && serializers[type]
   if (serializeTag !== undefined) {
     return serializeTag(type, element, text, children, index)
   }
   switch (type) {
-    case Elements.heading1:
+    case Element.heading1:
       return serializeStandardTag('h1', children, index, styles.heading1)
-    case Elements.heading2:
+    case Element.heading2:
       return serializeStandardTag('h2', children, index, styles.heading2)
-    case Elements.heading3:
+    case Element.heading3:
       return serializeStandardTag('h3', children, index, styles.heading3)
-    case Elements.heading4:
+    case Element.heading4:
       return serializeStandardTag('h4', children, index, styles.heading4)
-    case Elements.heading5:
+    case Element.heading5:
       return serializeStandardTag('h5', children, index, styles.heading5)
-    case Elements.heading6:
+    case Element.heading6:
       return serializeStandardTag('h6', children, index, styles.heading6)
-    case Elements.paragraph:
+    case Element.paragraph:
       return serializeStandardTag('p', children, index, styles.paragraph)
-    case Elements.preformatted:
+    case Element.preformatted:
       return serializeStandardTag('pre', children, index, styles.preformatted)
-    case Elements.strong:
+    case Element.strong:
       return serializeStandardTag('strong', children, index, styles.strong)
-    case Elements.em:
+    case Element.em:
       return serializeStandardTag('em', children, index, styles.em)
-    case Elements.listItem:
-      return serializeStandardTag('li', children, index, styles.listItem)
-    case Elements.oListItem:
-      return serializeStandardTag('li', children, index, styles.oListItem)
-    case Elements.list:
+    case Element.listItem:
+      return serializeStandardTag('li', children, index, styles['list-item'])
+    case Element.oListItem:
+      return serializeStandardTag('li', children, index, styles['o-list-item'])
+    case Element.list:
       return serializeUl(
         (children as unknown) as React.ComponentElement<TextProps, Text>[],
         index,
         styles
       )
-    case Elements.oList:
+    case Element.oList:
       return serializeOl(
         (children as unknown) as React.ComponentElement<TextProps, Text>[],
         index,
         styles
       )
-    case Elements.image:
+    case Element.image:
       return serializeImage(
-        (element as unknown) as ImageType,
+        element as RTImageNode,
         index,
         styles.imageWrapper as ViewStyle,
         styles.image as ImageStyle,
         onLinkPress
       )
-    case Elements.hyperlink:
+    case Element.hyperlink:
       return serializeHyperlink(
-        element,
+        element as RTLinkNode,
         children,
         index,
         styles.hyperlink,
         styles.hyperlinkHover,
         onLinkPress
       )
-    case Elements.label:
+    case Element.label:
       return serializeStandardTag('label', children, index, styles.label)
-    case Elements.span:
-      return serializeSpan(text, index)
+    case Element.span:
+      return serializeSpan(text || '', index)
     default:
       return null
   }
 }
 
-export const asText = (structuredText: RichTextContent[]) => {
+export const asText = (structuredText: RichTextField) => {
   if (Object.prototype.toString.call(structuredText) !== '[object Array]') {
     console.warn(
       `Rich text argument should be an Array. Received ${typeof structuredText}`
     )
     return null
   }
-  return PrismicRichText.asText(structuredText)
+  return asPrismicText(structuredText)
 }
 
 export function computeStyles(
@@ -268,10 +286,10 @@ export function computeStyles(
     preformatted: [defaultStyle, styles.preformatted],
     strong: [defaultStyle, styles.strong],
     em: [defaultStyle, styles.em],
-    listItem: [defaultStyle, styles.listItem],
+    'list-item': [defaultStyle, styles['list-item']],
     list: [defaultStyle, styles.list],
-    oList: [defaultStyle, styles.oList],
-    oListItem: [defaultStyle, styles.oListItem],
+    'o-list': [defaultStyle, styles['o-list']],
+    'o-list-item': [defaultStyle, styles['o-list-item']],
     label: [defaultStyle, styles.label],
     hyperlink: [defaultStyle, styles.hyperlink],
     hyperlinkHover: [defaultStyle, styles.hyperlinkHover],
