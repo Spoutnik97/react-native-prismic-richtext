@@ -1,6 +1,6 @@
 {
   "name": "react-native-prismic-richtext",
-  "version": "1.2.2",
+  "version": "2.0.0",
   "description": "",
   "homepage": "https://github.com/Spoutnik97/react-native-prismic-richtext",
   "main": "lib/index.js",
@@ -55,6 +55,7 @@
     ]
   },
   "dependencies": {
-    "prismic-richtext": "^1.0.3"
+    "@prismicio/richtext": "^2.0.1",
+    "@prismicio/types": "^0.1.27"
   }
 }

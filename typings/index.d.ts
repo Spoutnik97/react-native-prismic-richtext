@@ -1,5 +1,10 @@
-// @ts-ignore
-import { Elements } from 'prismic-richtext'
+import { RichTextFunctionSerializer } from '@prismicio/richtext'
+import {
+  FilledLinkToDocumentField,
+  FilledLinkToMediaField,
+  FilledLinkToWebField,
+  RichTextNodeType,
+} from '@prismicio/types'
 import {
   ImageStyle,
   StyleProp,
@@ -9,19 +14,12 @@ import {
   ViewStyle,
 } from 'react-native'
 
-export type RichTextElementType = Elements[keyof Elements]
+export type RichTextElementType = typeof RichTextNodeType[keyof typeof RichTextNodeType]
 
-export interface LinkType {
-  url: string
-  link_type: 'Web' | string
-  target?: string
-  type?: string
-  id?: string
-  uid?: string
-  slug?: string
-  lang?: string
-  isBroken?: boolean
-}
+export type LinkType =
+  | FilledLinkToDocumentField
+  | FilledLinkToWebField
+  | FilledLinkToMediaField
 
 export interface LinkFunction {
   (data: LinkType | undefined): void
@@ -31,49 +29,6 @@ type SpanDataType = {
   type: 'hyperlink'
   data?: LinkType
 }
-interface SpanType extends SpanDataType {
-  start: number
-  end: number
-  type: RichTextElementType
-}
-
-interface ImageType extends SpanDataType {
-  url: string
-  alt?: string
-  dimensions: {
-    width: number
-    height: number
-  }
-  type: RichTextElementType
-  linkTo: LinkType
-}
-
-export interface OembedType {
-  type: 'embed'
-  oembed: {
-    author_name?: string | null
-    author_url?: string | null
-    embed_url?: string | null
-    height?: number | null
-    html?: string | null
-    provider_name?: string | null
-    provider_url?: string | null
-    thumbnail_url?: string | null
-    thumbnail_height?: number | null
-    thumbnail_width?: number | null
-    title?: string | null
-    type?: string | null
-    version?: string | null
-    width?: number | null
-  }
-}
-
-export type RichTextContent = {
-  type: string
-  text: string
-  spans: SpanType[]
-}
-
 export type HTMLTags =
   | 'h1'
   | 'h2'
@@ -93,24 +48,29 @@ export type HTMLTags =
   | 'img'
 
 export type RichTextStyles = {
-  [key in keyof Elements]?:
+  [key in
+    | RichTextElementType
+    | 'imageWrapper'
+    | 'hyperlinkHover'
+    | 'list'
+    | 'o-list']?:
     | StyleProp<TextStyle>
     | StyleProp<ViewStyle>
     | StyleProp<ImageStyle>
 }
 
-export interface SerializerFunction {
-  (
-    type: RichTextElementType,
-    element: SpanType,
-    text: string,
-    children: React.ComponentElement<TextProps, Text>,
-    index: string
-  ): JSX.Element | null
-}
+export type SerializerFunction = RichTextFunctionSerializer<React.ComponentElement<
+  TextProps,
+  Text
+> | null>
+
+export type SerializerChildren = (React.ComponentElement<
+  TextProps,
+  Text
+> | null)[]
 
 export type RichTextSerializer = {
-  [key in keyof Elements]?: SerializerFunction
+  [key in RichTextElementType]?: SerializerFunction
 }
 
 export type RichTextDefaultStyles = TextStyle

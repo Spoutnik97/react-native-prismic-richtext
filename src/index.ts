@@ -1,10 +1,9 @@
-// @ts-ignore
-import PrismicRichText from 'prismic-richtext'
+import { serialize } from '@prismicio/richtext'
+import { RichTextField } from '@prismicio/types'
 import React, { createElement, Fragment } from 'react'
 
 import {
   LinkFunction,
-  RichTextContent,
   RichTextDefaultStyles,
   RichTextSerializer,
   RichTextStyles,
@@ -12,7 +11,7 @@ import {
 import { computeStyles, serializerWithStyle } from './services'
 
 type RichTextProps = {
-  richText: RichTextContent[]
+  richText: RichTextField
   defaultStyle?: RichTextDefaultStyles
   styles?: RichTextStyles
   ContainerComponent?: React.ComponentClass | React.ExoticComponent
@@ -41,7 +40,7 @@ export const RichText = ({
   }
 
   const computedStyles = computeStyles(defaultStyle, styles)
-  const serializedChildren = PrismicRichText.serialize(
+  const serializedChildren = serialize(
     richText,
     serializerWithStyle(computedStyles, onLinkPress, serializers)
   )

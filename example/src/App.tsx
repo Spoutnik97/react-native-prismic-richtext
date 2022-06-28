@@ -1,8 +1,8 @@
+import { RichTextField, RTNode } from '@prismicio/types'
 import React, { useEffect, useState } from 'react'
 import { RichText } from 'react-native-prismic-richtext'
-import { RichTextContent } from '../../typings'
 
-const fakeContent = [
+const fakeContent: RichTextField = [
   {
     type: 'paragraph',
     text:
@@ -34,11 +34,11 @@ const fakeContent = [
 ]
 
 const App = () => {
-  const [content, setContent] = useState<RichTextContent[]>(fakeContent)
+  const [content, setContent] = useState<RichTextField>(fakeContent)
   useEffect(() => {
     // fetch primsic richtext
     ;(async () => {
-      const fetchedContent: RichTextContent[] = fakeContent
+      const fetchedContent = fakeContent
       setContent(fetchedContent)
     })()
   }, [])
@@ -59,7 +59,7 @@ const App = () => {
           marginLeft: 8,
           marginVertical: 8,
         },
-        oList: {
+        'o-list': {
           marginLeft: 8,
           marginVertical: 8,
         },
